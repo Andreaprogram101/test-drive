@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Drive Tracker</title>
+    <!-- Viewport Meta Tag for Responsive Design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1c1f2b; /* Dark blue style */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-sizing: border-box;
+            width: 90%; /* Responsive width */
+            max-width: 500px; /* Limit width on larger screens */
+            margin: 20px auto; /* Center the container */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333333;
+        }
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        .timer {
+            text-align: center;
+            font-size: 20px;
+            margin: 15px 0;
+            color: #333333;
+        }
+        /* Buttons */
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button i {
+            margin-right: 8px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        /* Button Colors */
+        #start-btn {
+            background-color: #28a745; /* Green */
+        }
+        #stop-btn {
+            background-color: #dc3545; /* Red */
+        }
+        #save-btn {
+            background-color: #007bff; /* Blue */
+        }
+        #whatsapp-btn {
+            background-color: #25D366; /* WhatsApp Green */
+        }
+        #othermsgapp-btn {
+            background-color: #0080FF; /* OtherMsgApp Blue */
+        }
+        #email-btn {
+            background-color: #0072C6; /* Email Blue */
+        }
+        #reset-btn,
+        #clear-btn {
+            font-size: 14px;
+            padding: 10px; /* Adjusted padding */
+            width: 48%;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        #reset-btn {
+            background-color: #17a2b8; /* Cyan */
+        }
+        #clear-btn {
+            background-color: #6c757d; /* Gray */
+        }
+        /* Centering Short Buttons */
+        .short-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+        /* Star Rating */
+        .stars {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        .stars i {
+            font-size: 25px;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .stars i:hover,
+        .stars i.selected {
+            color: #ffcc00; /* Yellow for selected stars */
+        }
+        /* Question Group */
+        .question-group {
+            display: none; /* Hidden by default */
+        }
+        /* Options Container */
+        .options-container {
+            display: none; /* Initially hidden */
+            margin-top: 15px;
+        }
+        .options-container.visible {
+            display: block; /* Show when toggled */
+        }
+        /* Options Separator */
+        .options-separator {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .options-separator hr {
+            flex-grow: 1;
+            border: none;
+            border-top: 1px solid #ccc;
+        }
+        .options-separator span {
+            padding: 0 10px;
+            color: #007bff; /* Blue color */
+            font-weight: bold;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px;
+            }
+            .input-group input,
+            .input-group select {
+                padding: 8px;
+                font-size: 14px;
+            }
+            .timer {
+                font-size: 18px;
+            }
+            .short-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+            .short-buttons button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Customer Details -->
+    <div class="input-group">
+        <label for="customer-name">Customer Name:</label>
+        <input type="text" id="customer-name" placeholder="Enter customer's first name">
+    </div>
+    <div class="input-group">
+        <label for="customer-surname">Customer Surname:</label>
+        <input type="text" id="customer-surname" placeholder="Enter customer's last name">
+    </div>
+    <div class="input-group">
+        <label for="dealer-rep">Dealership Representative:</label>
+        <select id="dealer-rep">
+            <option value="John Smith">John Smith</option>
+            <option value="Jane Doe">Jane Doe</option>
+            <option value="Michael Johnson">Michael Johnson</option>
+            <option value="Emily Davis">Emily Davis</option>
+        </select>
+    </div>
+    <div class="input-group">
+        <label for="car-model">Car Model:</label>
+        <input type="text" id="car-model" placeholder="Enter car model">
+    </div>
+    <!-- Timer display -->
+    <div class="timer" id="timer">00:00:00</div>
+
+    <!-- Start and Stop Buttons -->
+    <button id="start-btn" onclick="startTestDrive()"><i class="fas fa-play"></i>Start Test Drive</button>
+    <button id="stop-btn" onclick="stopTestDrive()" disabled><i class="fas fa-stop"></i>Stop Test Drive</button>
+
+    <!-- Additional Questions -->
+    <div class="question-group" id="question-group">
+        <div class="input-group">
+            <label for="rating">Question 1: Rate the test drive experience:</label>
+            <div class="stars" id="star-rating">
+                <i class="fas fa-star" data-value="1"></i>
+                <i class="fas fa-star" data-value="2"></i>
+                <i class="fas fa-star" data-value="3"></i>
+                <i class="fas fa-star" data-value="4"></i>
+                <i class="fas fa-star" data-value="5"></i>
+            </div>
+        </div>
+        <div class="input-group">
+            <label for="question-2">Question 2:</label>
+            <input type="text" id="question-2" placeholder="Enter your answer">
+        </div>
+        <div class="input-group">
+            <label for="question-3">Question 3:</label>
+            <input type="text" id="question-3" placeholder="Enter your answer">
+        </div>
+        <button id="save-btn" onclick="saveCustomerResponse()"><i class="fas fa-save"></i>Save</button>
+    </div>
+
+    <!-- Options Separator -->
+    <div class="options-separator" onclick="toggleOptions()">
+        <hr><span>Options</span><hr>
+    </div>
+
+    <!-- Options Container -->
+    <div class="options-container" id="options-container">
+        <button id="whatsapp-btn" onclick="sendAllRecordsViaWhatsApp()"><i class="fab fa-whatsapp"></i>Send All Records via WhatsApp</button>
+        <button id="othermsgapp-btn" onclick="sendAllRecordsViaOtherMsgApp()"><i class="fas fa-share-alt"></i>Send All Records via OtherMsgApp</button>
+        <button id="email-btn" onclick="downloadCSVAndSendEmail()"><i class="fas fa-envelope"></i>Send All Records via Email</button>
+        <div class="short-buttons">
+            <button id="reset-btn" onclick="refreshPage()"><i class="fas fa-redo"></i>New Test Drive</button>
+            <button id="clear-btn" onclick="clearLocalStorage()"><i class="fas fa-trash"></i>Clear Records</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let rating = 0; // To store the selected rating
+    let startTime; // Start time of test drive
+    let stopTime; // Stop time of test drive
+    let totalDuration; // Duration of test drive
+    let isRunning = false; // Indicates if the timer is running
+    let timerInterval; // Store the interval ID for the timer
+
+    // Star rating logic
+    document.querySelectorAll('.stars i').forEach(star => {
+        star.addEventListener('mouseover', () => {
+            highlightStars(star.getAttribute('data-value'));
+        });
+        star.addEventListener('click', () => {
+            rating = star.getAttribute('data-value');
+            highlightStars(rating, true);
+        });
+    });
+
+    function highlightStars(value) {
+        document.querySelectorAll('.stars i').forEach(star => {
+            if (star.getAttribute('data-value') <= value) {
+                star.classList.add('selected');
+            } else {
+                star.classList.remove('selected');
+            }
+        });
+    }
+
+    function startTestDrive() {
+        startTime = new Date();
+        document.getElementById('start-btn').disabled = true;
+        document.getElementById('stop-btn').disabled = false;
+        isRunning = true;
+
+        // Start the timer and store the interval ID
+        timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function stopTestDrive() {
+        isRunning = false;
+        document.getElementById('stop-btn').disabled = true;
+
+        // Stop the timer
+        clearInterval(timerInterval);
+
+        // Capture stop time
+        stopTime = new Date();
+
+        // Calculate duration
+        const elapsed = Math.floor((stopTime - startTime) / 1000); // Total seconds elapsed
+        totalDuration = new Date(elapsed * 1000).toISOString().substr(11, 8);
+
+        // Show the additional questions
+        document.getElementById('question-group').style.display = 'block';
+    }
+
+    function updateTimer() {
+        if (!isRunning) return;
+
+        const now = new Date();
+        const elapsed = Math.floor((now - startTime) / 1000); // Total seconds elapsed
+        const hours = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+        const minutes = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+        const seconds = String(elapsed % 60).padStart(2, '0');
+
+        document.getElementById('timer').textContent = `${hours}:${minutes}:${seconds}`;
+    }
+
+    function saveCustomerResponse() {
+        // Gather form data
+        const customerName = document.getElementById('customer-name').value || 'N/A';
+        const customerSurname = document.getElementById('customer-surname').value || 'N/A';
+        const dealerRep = document.getElementById('dealer-rep').value || 'N/A';
+        const carModel = document.getElementById('car-model').value || 'N/A';
+        const question2 = document.getElementById('question-2').value || 'N/A';
+        const question3 = document.getElementById('question-3').value || 'N/A';
+
+        // Collect data to save in local storage
+        const testDriveRecord = {
+            customerName,
+            customerSurname,
+            dealerRep,
+            carModel,
+            startTime: startTime ? startTime.toLocaleString() : 'N/A',
+            stopTime: stopTime ? stopTime.toLocaleString() : 'N/A',
+            duration: totalDuration || 'N/A',
+            rating: rating || 'N/A', // Include the star rating
+            question2, // Include Question 2's response
+            question3  // Include Question 3's response
+        };
+
+        saveToLocalStorage(testDriveRecord);
+
+        // Clear fields and reset states
+        resetForm();
+    }
+
+    function saveToLocalStorage(record) {
+        // Retrieve existing data from local storage
+        let testDrives = JSON.parse(localStorage.getItem('testDrives')) || [];
+
+        // Add the new record
+        testDrives.push(record);
+
+        // Save updated data to local storage
+        localStorage.setItem('testDrives', JSON.stringify(testDrives));
+    }
+
+    function resetForm() {
+        document.getElementById('customer-name').value = '';
+        document.getElementById('customer-surname').value = '';
+        document.getElementById('dealer-rep').selectedIndex = 0;
+        document.getElementById('car-model').value = '';
+        document.getElementById('timer').textContent = '00:00:00';
+        rating = 0; // Reset rating
+        startTime = null; // Reset start time
+        stopTime = null; // Reset stop time
+        totalDuration = null; // Reset duration
+        document.querySelectorAll('.stars i').forEach(star => star.classList.remove('selected'));
+        document.getElementById('question-2').value = '';
+        document.getElementById('question-3').value = '';
+        document.getElementById('start-btn').disabled = false;
+        document.getElementById('stop-btn').disabled = true;
+        document.getElementById('question-group').style.display = 'none';
+    }
+
+    function toggleOptions() {
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.classList.toggle('visible');
+    }
+
+    function refreshPage() {
+        location.reload(); // Refresh the page
+    }
+
+    function clearLocalStorage() {
+        if (confirm('Warning: This will delete all stored test drive records and cannot be undone. Are you sure you want to proceed?')) {
+            localStorage.removeItem('testDrives');
+            alert('All records have been cleared.');
+        }
+    }
+
+    function generateCSV() {
+        const testDrives = JSON.parse(localStorage.getItem('testDrives')) || [];
+        if (testDrives.length === 0) {
+            alert('No records to process.');
+            return null;
+        }
+
+        const headers = 'Customer Name,Customer Surname,Dealership Representative,Car Model,Start Time,Stop Time,Duration,Rating,Question 2,Question 3\n';
+        const csvContent = testDrives.map(record =>
+            `${record.customerName},${record.customerSurname},${record.dealerRep},${record.carModel},${record.startTime},${record.stopTime},${record.duration},${record.rating},${record.question2},${record.question3}`
+        ).join('\n');
+
+        return headers + csvContent;
+    }
+
+    function downloadCSVAndSendEmail() {
+        const csvContent = generateCSV();
+        if (!csvContent) return;
+
+        // Prepare the email content with the CSV data
+        const subject = `Test Drive Records`;
+        const emailBody = `Please find the test drive records below:\n\n${csvContent}`;
+
+        // Open the user's default email client with pre-filled subject and body, no recipient
+        window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+    }
+
+    function sendAllRecordsViaWhatsApp() {
+        const csvContent = generateCSV();
+        if (!csvContent) return;
+
+        const message = encodeURIComponent('Test Drive Records:\n' + csvContent);
+        const url = `https://wa.me/?text=${message}`;
+
+        window.open(url, '_blank');
+    }
+
+    function sendAllRecordsViaOtherMsgApp() {
+        const csvContent = generateCSV();
+        if (!csvContent) return;
+
+        if (navigator.share) {
+            navigator.share({
+                title: 'Test Drive Records',
+                text: 'Please find the test drive records below:\n\n' + csvContent
+            })
+            .then(() => console.log('Share successful'))
+            .catch((error) => console.log('Error sharing:', error));
+        } else {
+            alert('Sharing is not supported on this browser. Please copy the records manually.');
+        }
+    }
+</script>
+
+</body>
+</html>
